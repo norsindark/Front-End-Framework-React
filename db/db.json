@@ -1,0 +1,12 @@
+{
+  "users": [
+    {
+      "id": "69cf",
+      "name": "Nguyên Tuấn",
+      "email": "user1@gmail.com",
+      "password": "$2a$10$RLXCafG/xN7zYJgKaoidMefzuQn3xeVaW6lqA6my5jnwi2Nyve9eu",
+      "role": "USER",
+      "token": "u8b9j4p6pb"
+    }
+  ]
+}
