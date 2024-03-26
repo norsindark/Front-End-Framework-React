@@ -18,7 +18,9 @@ const Login = () => {
       if (success) {
         alert("Login successful!");
         if (rememberMe) {
-          localStorage.setItem("token", email);
+          const token = localStorage.getItem("accessToken");
+          localStorage.setItem("accessToken", token);
+          console.log(token);
         }
         navigate("/admin/dashboard", { replace: true });
       } else {

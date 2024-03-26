@@ -1,18 +1,44 @@
-
-import React from "react";
-import { useLocation, Route, Routes, Navigate } from "react-router-dom";
-// reactstrap components
+import React, { useEffect, useState } from "react";
+import { useLocation, Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import { Container } from "reactstrap";
-// core components
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
-
 import routes from "../routers/routes.js";
+import { useAuth } from "context/auth.js";
+import axios from "axios";
+// import axios from "axios";
 
 const Admin = (props) => {
+  const navigate = useNavigate();
   const mainContent = React.useRef(null);
   const location = useLocation();
+  const { getUserByAccessToken } = useAuth();
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const user = await getUserByAccessToken();
+        if (!user) {
+          navigate('/auth/login');
+        } else if (user.role !== 'ADMIN') {
+          navigate('/error');
+        } else {
+          const response = await axios.get("http://localhost:3001/users");
+          const { data } = response;
+          if (data) {
+            const foundUser = data.find(userData => userData.email === user.email);
+            setCurrentUser(foundUser);
+          }
+        }
+      } catch (error) {
+        console.error('Error checking authentication:', error);
+      }
+    };
+    checkAuth();
+  }, [getUserByAccessToken, navigate, setCurrentUser]);
+
 
   React.useEffect(() => {
     document.documentElement.scrollTop = 0;
@@ -59,6 +85,7 @@ const Admin = (props) => {
         <AdminNavbar
           {...props}
           brandText={getBrandText(props?.location?.pathname)}
+          currentUser={currentUser}
         />
         <Routes>
           {getRoutes(routes)}

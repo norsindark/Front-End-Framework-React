@@ -2,11 +2,23 @@
   "users": [
     {
       "id": "69cf",
-      "name": "Nguyên Tuấn",
+      "name": "Nguyên Tuấnn",
       "email": "user1@gmail.com",
-      "password": "$2a$10$RLXCafG/xN7zYJgKaoidMefzuQn3xeVaW6lqA6my5jnwi2Nyve9eu",
+      "role": "ADMIN",
+      "status": "Banned",
+      "password": "$2a$10$NgaMlCD1uBhmjSHMz9xFw.dNuSwm7VMY282aUSIFWF3XE6VBkFfcm",
+      "address": "227/97 HHTT",
+      "token": "227/97 HHTT"
+    },
+    {
+      "id": "c281",
+      "name": "Nguyên Tuấn",
+      "email": "user3@gmail.com",
+      "password": "$2a$10$CnxqU5lD/P0.srIUOYaTDeR60k1de6PkpIzEF8tFvaLiT/u3LVYBy",
       "role": "USER",
-      "token": "u8b9j4p6pb"
+      "status": "IsActive",
+      "address": "",
+      "token": "82qy4muiyxt"
     }
   ]
 }

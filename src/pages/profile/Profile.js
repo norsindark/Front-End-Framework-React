@@ -1,43 +1,133 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.2.4
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2024 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-
-// reactstrap components
-import {
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  FormGroup,
-  Form,
-  Input,
-  Container,
-  Row,
-  Col,
-} from "reactstrap";
-// core components
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Button, Card, CardHeader, CardBody, FormGroup, Form, Input, Container, Row, Col, Modal, ModalHeader, ModalBody, ModalFooter, Label } from "reactstrap";
 import UserHeader from "components/Headers/UserHeader.js";
+import { useAuth } from "context/auth";
+import bcrypt from "bcryptjs";
 
 const Profile = () => {
+  const [userData, setUserData] = useState(null);
+  const { getUserByAccessToken } = useAuth();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [editedName, setEditedName] = useState("");
+  const [editedEmail, setEditedEmail] = useState("");
+  const [editedPassword, setEditedPassword] = useState("");
+  const [editedAddress, setEditedAddress] = useState("");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userEmail = await getUserByAccessToken();
+        const response = await axios.get(`http://localhost:3001/users?email=${userEmail.email}`);
+        const { data } = response;
+        if (data && data.length > 0) {
+          setUserData(data[0]);
+        } else {
+          console.error("User not found in database");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    fetchUserData();
+  }, [getUserByAccessToken]);
+
+  const handleEditUser = (userData) => {
+    setEditingUser(userData);
+    setEditedName(userData.name);
+    setEditedEmail(userData.email);
+    setEditedPassword(""); 
+    setEditedAddress(userData.address);
+    setIsModalOpen(true);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingUser(null);
+    setIsModalOpen(false);
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    switch (name) {
+      case "name":
+        setEditedName(value);
+        break;
+      case "email":
+        setEditedEmail(value);
+        break;
+      case "password":
+        setEditedPassword(value);
+        break;
+      case "address":
+        setEditedAddress(value);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    const isConfirmed = window.confirm("Are you sure you want to save these changes?");
+    if (isConfirmed) {
+      try {
+        // Encode the password before saving
+        const encodedPassword = await encodePassword(editedPassword);
+        const updatedUser = {
+          id: editingUser.id,
+          name: editedName,
+          email: editedEmail,
+          role: editingUser.role,
+          status: editingUser.status,
+          password: encodedPassword, // Store the encoded password
+          address: editedAddress,
+          token: editingUser.token,
+        };
+
+        await axios.put(`http://localhost:3001/users/${editingUser.id}`, updatedUser);
+        
+        setIsModalOpen(false);
+        setEditingUser(null);
+        window.alert("User updated successfully!");
+        await refreshUserData();
+      } catch (error) {
+        console.error("Error updating user:", error);
+      }
+    }
+  };
+
+  const encodePassword = async (password) => {
+    try {
+      const saltRounds = 10;
+      const salt = await bcrypt.genSalt(saltRounds);
+      const hashedPassword = await bcrypt.hash(password, salt);
+      return hashedPassword;
+    } catch (error) {
+      console.error('Error encoding password:', error);
+      throw error;
+    }
+  };
+
+  const refreshUserData = async () => {
+  try {
+    const userEmail = await getUserByAccessToken();
+    const response = await axios.get(`http://localhost:3001/users?email=${userEmail.email}`);
+    const { data } = response;
+    if (data && data.length > 0) {
+      setUserData(data[0]);
+    } else {
+      console.error("User not found in database");
+    }
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+  }
+};
+
   return (
     <>
       <UserHeader />
-      {/* Page content */}
       <Container className="mt--7" fluid>
+        {/* Profile card */}
         <Row>
           <Col className="order-xl-2 mb-5 mb-xl-0" xl="4">
             <Card className="card-profile shadow">
@@ -125,6 +215,11 @@ const Profile = () => {
               </CardBody>
             </Card>
           </Col>
+          <Col className="order-xl-2 mb-5 mb-xl-0" xl="4">
+            <Card className="card-profile shadow">
+              {/* Card content */}
+            </Card>
+          </Col>
           <Col className="order-xl-1" xl="8">
             <Card className="bg-secondary shadow">
               <CardHeader className="bg-white border-0">
@@ -136,7 +231,7 @@ const Profile = () => {
                     <Button
                       color="primary"
                       href="#pablo"
-                      onClick={(e) => e.preventDefault()}
+                      onClick={() => handleEditUser(userData)}
                       size="sm"
                     >
                       Settings
@@ -146,6 +241,7 @@ const Profile = () => {
               </CardHeader>
               <CardBody>
                 <Form>
+                  {/* User information */}
                   <h6 className="heading-small text-muted mb-4">
                     User information
                   </h6>
@@ -157,14 +253,15 @@ const Profile = () => {
                             className="form-control-label"
                             htmlFor="input-username"
                           >
-                            Username
+                            Full Name
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue="lucky.jesse"
+                            defaultValue={userData?.name || ""}
                             id="input-username"
                             placeholder="Username"
                             type="text"
+                            disabled
                           />
                         </FormGroup>
                       </Col>
@@ -178,9 +275,11 @@ const Profile = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
+                            defaultValue={userData?.email || ""}
                             id="input-email"
-                            placeholder="jesse@example.com"
+                            placeholder="Email"
                             type="email"
+                            disabled
                           />
                         </FormGroup>
                       </Col>
@@ -196,10 +295,11 @@ const Profile = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue="Lucky"
+                            defaultValue={userData ? userData.name.split(' ')[0] : ""}
                             id="input-first-name"
                             placeholder="First name"
                             type="text"
+                            disabled
                           />
                         </FormGroup>
                       </Col>
@@ -213,10 +313,11 @@ const Profile = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue="Jesse"
+                            defaultValue={userData ? userData.name.split(' ').slice(1).join(' ') : ""}
                             id="input-last-name"
                             placeholder="Last name"
                             type="text"
+                            disabled
                           />
                         </FormGroup>
                       </Col>
@@ -239,10 +340,11 @@ const Profile = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
+                            defaultValue={userData?.address || ""}
                             id="input-address"
-                            placeholder="Home Address"
+                            placeholder="Address"
                             type="text"
+                            disabled
                           />
                         </FormGroup>
                       </Col>
@@ -258,10 +360,11 @@ const Profile = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue="New York"
+                            defaultValue={userData?.city || ""}
                             id="input-city"
                             placeholder="City"
                             type="text"
+                            disabled
                           />
                         </FormGroup>
                       </Col>
@@ -275,10 +378,11 @@ const Profile = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue="United States"
+                            defaultValue={userData?.country || ""}
                             id="input-country"
                             placeholder="Country"
                             type="text"
+                            disabled
                           />
                         </FormGroup>
                       </Col>
@@ -286,22 +390,24 @@ const Profile = () => {
                         <FormGroup>
                           <label
                             className="form-control-label"
-                            htmlFor="input-country"
+                            htmlFor="input-postal-code"
                           >
                             Postal code
                           </label>
                           <Input
                             className="form-control-alternative"
+                            defaultValue={userData?.postal_code || ""}
                             id="input-postal-code"
                             placeholder="Postal code"
                             type="number"
+                            disabled
                           />
                         </FormGroup>
                       </Col>
                     </Row>
                   </div>
                   <hr className="my-4" />
-                  {/* Description */}
+                  {/* About Me */}
                   <h6 className="heading-small text-muted mb-4">About me</h6>
                   <div className="pl-lg-4">
                     <FormGroup>
@@ -310,9 +416,9 @@ const Profile = () => {
                         className="form-control-alternative"
                         placeholder="A few words about you ..."
                         rows="4"
-                        defaultValue="A beautiful Dashboard for Bootstrap 4. It is Free and
-                        Open Source."
+                        defaultValue={userData?.about_me || ""}
                         type="textarea"
+                        disabled
                       />
                     </FormGroup>
                   </div>
@@ -321,6 +427,35 @@ const Profile = () => {
             </Card>
           </Col>
         </Row>
+
+        {/* Modal */}
+        <Modal isOpen={isModalOpen} toggle={handleCancelEdit} backdrop="static">
+          <ModalHeader toggle={handleCancelEdit}>Edit My Profile</ModalHeader>
+          <ModalBody>
+            <Form>
+              <FormGroup>
+                <Label for="name">Name</Label>
+                <Input type="text" name="name" id="name" value={editedName} onChange={handleChange} />
+              </FormGroup>
+              <FormGroup>
+                <Label for="email">Email</Label>
+                <Input type="email" name="email" id="email" value={editedEmail} onChange={handleChange} />
+              </FormGroup>
+              <FormGroup>
+                <Label for="password">Password</Label>
+                <Input type="password" name="password" id="password" value={editedPassword} onChange={handleChange} />
+              </FormGroup>
+              <FormGroup>
+                <Label for="address">Address</Label>
+                <Input type="text" name="address" id="address" value={editedAddress} onChange={handleChange} />
+              </FormGroup>
+            </Form>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={handleSaveEdit}>Save</Button>{' '}
+            <Button color="secondary" onClick={handleCancelEdit}>Cancel</Button>
+          </ModalFooter>
+        </Modal>
       </Container>
     </>
   );

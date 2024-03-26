@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { NavLink as NavLinkRRD, Link } from "react-router-dom";
-// import { useAuth } from "context/auth";
+import { useAuth } from "context/auth";
 import { PropTypes } from "prop-types";
 
 // reactstrap components
@@ -39,7 +39,7 @@ var ps;
 
 const Sidebar = (props) => {
   const [collapseOpen, setCollapseOpen] = useState();
-  // const { signOut } = useAuth();
+  const { signOut } = useAuth();
 
   const activeRoute = (routeName) => {
     return props.location.pathname.indexOf(routeName) > -1 ? "active" : "";
@@ -214,14 +214,14 @@ const Sidebar = (props) => {
           {/* Heading */}
           {/* <h6 className="navbar-heading text-muted">Documentation</h6> */}
           {/* Navigation */}
-          {/* <Nav className="mb-md-3" navbar>
+          <Nav className="mb-md-3" navbar>
             <NavItem>
               <NavLink href="#" onClick={signOut}>
-                <i className="ni ni-ui-04" />
+                <i className="ni ni-user-run" />
                 Logout
               </NavLink>
             </NavItem>
-          </Nav> */}
+          </Nav>
           <Nav className="mb-md-3" navbar>
             <NavItem className="active-pro active">
               <NavLink href="#">
