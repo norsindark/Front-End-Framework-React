@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import { Button, Card, CardBody, Col, FormGroup, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from "reactstrap";
 import axios from "axios";
 import validator from "validator";
-import bcrypt from "bcryptjs"; // Import thư viện bcrypt
+import bcrypt from "bcryptjs";
 
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("USER");
+  const [status, setStatus] = useState("IsActive");
   const [password, setPassword] = useState("");
+  const [address, setAddress] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({});
 
@@ -64,7 +66,7 @@ const Register = () => {
           const hashedPassword = await bcrypt.hash(password, salt);
           const randomToken = Math.random().toString(36).substring(2);
   
-          const newUser = { name, email, password: hashedPassword, role, token: randomToken }; 
+          const newUser = { name, email, password: hashedPassword, role, status,address, token: randomToken }; 
           await axios.post("http://localhost:3001/users", newUser);
           alert("User created successfully!");
           setName("");
@@ -72,6 +74,7 @@ const Register = () => {
           setPassword("");
           setConfirmPassword("");
           setRole("");
+          setAddress("");
           setErrors("");
         } catch (error) {
           console.error("Error creating user:", error);
