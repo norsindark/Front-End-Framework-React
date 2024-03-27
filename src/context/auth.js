@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import axios from "axios";
-import bcrypt from "bcryptjs";
+import bcrypt, { compare } from "bcryptjs";
 import JWT from 'expo-jwt';
 import { useNavigate } from "react-router-dom";
 
@@ -49,6 +49,40 @@ export default function AuthProvider({ children }) {
     //     }
     // };
 
+    // const signIn = async (email, password) => {
+    //     try {
+    //         const response = await axios.get("http://localhost:3001/users");
+    //         const { data } = response;
+
+    //         if (data) {
+    //             const user = data.find(user => user.email === email);
+    //             if (user) {
+    //                 const isPasswordMatch = await comparePasswords(password, user.password);
+    //                 if (isPasswordMatch) {
+    //                     const payload = { email: user.email, role: user.role };
+
+    //                     const token = JWT.encode(payload, jwtSecret, {
+    //                         expiresIn: "1h",
+    //                     });
+
+    //                     localStorage.setItem('accessToken', token);
+    //                     setUser(user);
+    //                     return true;
+    //                 } else {
+    //                     return false;
+    //                 }
+    //             } else {
+    //                 return false;
+    //             }
+    //         } else {
+    //             return false;
+    //         }
+    //     } catch (error) {
+    //         console.error("Error signing in:", error);
+    //         return false;
+    //     }
+    // };
+
     const signIn = async (email, password) => {
         try {
             const response = await axios.get("http://localhost:3001/users");
@@ -58,13 +92,13 @@ export default function AuthProvider({ children }) {
                 const user = data.find(user => user.email === email);
                 if (user) {
                     const isPasswordMatch = await comparePasswords(password, user.password);
+
                     if (isPasswordMatch) {
-                        const payload = { email: user.email, role: user.role };
+                        const payload = { email: user.email, role: user.role, password: user.password };
 
                         const token = JWT.encode(payload, jwtSecret, {
                             expiresIn: "1h",
                         });
-                        // console.log(token);
 
                         localStorage.setItem('accessToken', token);
                         setUser(user);
@@ -105,7 +139,8 @@ export default function AuthProvider({ children }) {
             const decodedToken = JWT.decode(accessToken, jwtSecret);
             const user = {
                 email: decodedToken.email,
-                role: decodedToken.role
+                role: decodedToken.role,
+                password: decodedToken.password
             };
             return user;
         } catch (error) {
@@ -116,7 +151,7 @@ export default function AuthProvider({ children }) {
 
 
     return (
-        <AuthContext.Provider value={{ user, signIn, signOut, getUserByAccessToken, removeToken }}>
+        <AuthContext.Provider value={{ user, signIn, signOut, getUserByAccessToken, removeToken, comparePasswords }}>
             {children}
         </AuthContext.Provider>
     );

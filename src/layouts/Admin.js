@@ -5,9 +5,9 @@ import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import AdminFooter from "components/Footers/AdminFooter.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 import routes from "../routers/routes.js";
+import { BASE_API } from "constant/network.js";
 import { useAuth } from "context/auth.js";
 import axios from "axios";
-// import axios from "axios";
 
 const Admin = (props) => {
   const navigate = useNavigate();
@@ -17,6 +17,26 @@ const Admin = (props) => {
   const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
+    // const checkToken = async () => {
+    //   try {
+    //     const accessToken = localStorage.getItem('accessToken');
+    //     if (accessToken) {
+    //       const user = await getUserByAccessToken();
+    //       if (user) {
+    //         const { data } = await axios.get(`${BASE_API}/users?email=${user.email}`);
+
+    //         if (user.password === data[0].password) {
+    //           return true;
+    //         }
+
+    //       }
+    //     }
+    //   } catch (error) {
+    //     console.error('Error checking token:', error);
+    //   }
+    // };
+    // checkToken();
+
     const checkAuth = async () => {
       try {
         const user = await getUserByAccessToken();
@@ -25,7 +45,7 @@ const Admin = (props) => {
         } else if (user.role !== 'ADMIN') {
           navigate('/error');
         } else {
-          const response = await axios.get("http://localhost:3001/users");
+          const response = await axios.get(`${BASE_API}/users`);
           const { data } = response;
           if (data) {
             const foundUser = data.find(userData => userData.email === user.email);

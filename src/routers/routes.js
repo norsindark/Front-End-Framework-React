@@ -1,11 +1,10 @@
 import React from "react";
 import Index from "views/Index.js";
 import Profile from "pages/profile/Profile";
-// import Register from "views/examples/Register.js";
-// import Login from "views/examples/Login.js";
 import TableUsers from "pages/users/TableUsers";
 import Icons from "views/examples/Icons.js";
 import TableProducts from "pages/products/TableProducts";
+import TableCategories from "pages/categories/TableCategories";
 
 var routes = [
   {
@@ -45,6 +44,14 @@ var routes = [
     name: "Table Products",
     icon: "ni ni-archive-2",
     component: <TableProducts />,
+    layout: "/admin",
+    roles: ['ADMIN'] 
+  },
+  {
+    path: "/table-categories",
+    name: "Table Categrories",
+    icon: "ni ni-collection",
+    component: <TableCategories />,
     layout: "/admin",
     roles: ['ADMIN'] 
   },

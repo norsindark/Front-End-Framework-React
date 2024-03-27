@@ -1,6 +1,6 @@
 import React from "react";
-import Register from "views/examples/Register.js";
-import Login from "views/examples/Login.js";
+import Register from "pages/authentication/Register";
+import Login from "pages/authentication/Login";
 
 var routesAuth = [
     {
