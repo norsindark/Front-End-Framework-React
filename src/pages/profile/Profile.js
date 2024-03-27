@@ -12,6 +12,8 @@ const Profile = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [editedName, setEditedName] = useState("");
   const [editedEmail, setEditedEmail] = useState("");
+  const [editedRole, setEditedRole] = useState("");
+  const [editedStatus, setEditedStatus] = useState("");
   const [editedPassword, setEditedPassword] = useState("");
   const [editedStreet, setEditedStreet] = useState("");
   const [editedCity, setEditedCity] = useState("");
@@ -42,6 +44,8 @@ const Profile = () => {
     setEditingUser(userData);
     setEditedName(userData.name);
     setEditedEmail(userData.email);
+    setEditedRole(userData.role);
+    setEditedStatus(userData.status);
     setEditedPassword(userData.password);
     setEditedStreet(userData.address.street);
     setEditedCity(userData.address.city);
@@ -89,7 +93,7 @@ const Profile = () => {
   };
 
   const handleSaveEdit = async () => {
-    updateUser(editingUser, editedName, editedEmail, editedPassword, editedStreet, editedCity, editedCountry, editedPostalCode, editedAbout, setIsModalOpen, setEditingUser, refreshUserData);
+    updateUser(editingUser, editedName, editedEmail, editedRole, editedStatus, editedPassword, editedStreet, editedCity, editedCountry, editedPostalCode, editedAbout, setIsModalOpen, setEditingUser);
   };
 
   const refreshUserData = async () => {
