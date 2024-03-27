@@ -4,6 +4,7 @@ import { Button, Card, CardHeader, CardBody, FormGroup, Form, Input, Container, 
 import UserHeader from "components/Headers/UserHeader.js";
 import { useAuth } from "context/auth";
 import bcrypt from "bcryptjs";
+import { updateUser } from "services/user";
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
@@ -13,13 +14,17 @@ const Profile = () => {
   const [editedName, setEditedName] = useState("");
   const [editedEmail, setEditedEmail] = useState("");
   const [editedPassword, setEditedPassword] = useState("");
-  const [editedAddress, setEditedAddress] = useState("");
+  const [editedStreet, setEditedStreet] = useState("");
+  const [editedCity, setEditedCity] = useState("");
+  const [editedCountry, setEditedCountry] = useState("");
+  const [editedPostalCode, setEditedPostalCode] = useState("");
+  const [editedAbout, setEditedAbout] = useState("");
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userEmail = await getUserByAccessToken();
-        const response = await axios.get(`http://localhost:3001/users?email=${userEmail.email}`);
+        const user = await getUserByAccessToken();
+        const response = await axios.get(`http://localhost:3001/users?email=${user.email}`);
         const { data } = response;
         if (data && data.length > 0) {
           setUserData(data[0]);
@@ -33,12 +38,17 @@ const Profile = () => {
     fetchUserData();
   }, [getUserByAccessToken]);
 
+
   const handleEditUser = (userData) => {
     setEditingUser(userData);
     setEditedName(userData.name);
     setEditedEmail(userData.email);
-    setEditedPassword(""); 
-    setEditedAddress(userData.address);
+    setEditedPassword(userData.password);
+    setEditedStreet(userData.address.street);
+    setEditedCity(userData.address.city);
+    setEditedCountry(userData.address.country);
+    setEditedPostalCode(userData.address.postal_code);
+    setEditedAbout(userData.about);
     setIsModalOpen(true);
   };
 
@@ -56,11 +66,23 @@ const Profile = () => {
       case "email":
         setEditedEmail(value);
         break;
+      case "street":
+        setEditedStreet(value);
+        break;
+      case "city":
+        setEditedCity(value);
+        break;
+      case "country":
+        setEditedCountry(value);
+        break;
+      case "postalCode":
+        setEditedPostalCode(value);
+        break;
+      case "about":
+        setEditedAbout(value);
+        break;
       case "password":
         setEditedPassword(value);
-        break;
-      case "address":
-        setEditedAddress(value);
         break;
       default:
         break;
@@ -68,60 +90,24 @@ const Profile = () => {
   };
 
   const handleSaveEdit = async () => {
-    const isConfirmed = window.confirm("Are you sure you want to save these changes?");
-    if (isConfirmed) {
-      try {
-        // Encode the password before saving
-        const encodedPassword = await encodePassword(editedPassword);
-        const updatedUser = {
-          id: editingUser.id,
-          name: editedName,
-          email: editedEmail,
-          role: editingUser.role,
-          status: editingUser.status,
-          password: encodedPassword, // Store the encoded password
-          address: editedAddress,
-          token: editingUser.token,
-        };
-
-        await axios.put(`http://localhost:3001/users/${editingUser.id}`, updatedUser);
-        
-        setIsModalOpen(false);
-        setEditingUser(null);
-        window.alert("User updated successfully!");
-        await refreshUserData();
-      } catch (error) {
-        console.error("Error updating user:", error);
-      }
-    }
-  };
-
-  const encodePassword = async (password) => {
-    try {
-      const saltRounds = 10;
-      const salt = await bcrypt.genSalt(saltRounds);
-      const hashedPassword = await bcrypt.hash(password, salt);
-      return hashedPassword;
-    } catch (error) {
-      console.error('Error encoding password:', error);
-      throw error;
-    }
+    updateUser(editingUser, editedName, editedEmail, editedPassword, editedStreet, editedCity, editedCountry, editedPostalCode, editedAbout, setIsModalOpen, setEditingUser, refreshUserData);
   };
 
   const refreshUserData = async () => {
-  try {
-    const userEmail = await getUserByAccessToken();
-    const response = await axios.get(`http://localhost:3001/users?email=${userEmail.email}`);
-    const { data } = response;
-    if (data && data.length > 0) {
-      setUserData(data[0]);
-    } else {
-      console.error("User not found in database");
+    try {
+      const userEmail = await getUserByAccessToken();
+      const response = await axios.get(`http://localhost:3001/users?email=${userEmail.email}`);
+      const { data } = response;
+      if (data && data.length > 0) {
+        setUserData(data[0]);
+      } else {
+        console.error("User not found in database");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
     }
-  } catch (error) {
-    console.error("Error fetching user data:", error);
-  }
-};
+  };
+
 
   return (
     <>
@@ -138,7 +124,7 @@ const Profile = () => {
                       <img
                         alt="..."
                         className="rounded-circle"
-                        src={require("../../assets/img/theme/team-4-800x800.jpg")}
+                        src={(userData?.avatarUrl || "")}
                       />
                     </a>
                   </div>
@@ -187,30 +173,27 @@ const Profile = () => {
                 </Row>
                 <div className="text-center">
                   <h3>
-                    Jessica Jones
-                    <span className="font-weight-light">, 27</span>
+                    {userData?.name || "Update information about you"}
                   </h3>
                   <div className="h5 font-weight-300">
                     <i className="ni location_pin mr-2" />
-                    Bucharest, Romania
+                    {userData?.address.street || ""}
                   </div>
                   <div className="h5 mt-4">
                     <i className="ni business_briefcase-24 mr-2" />
-                    Solution Manager - Creative Tim Officer
+                    {userData?.address.city || "Update information about you"} - {userData?.address.country || ""}
                   </div>
                   <div>
                     <i className="ni education_hat mr-2" />
-                    University of Computer Science
+
                   </div>
                   <hr className="my-4" />
                   <p>
-                    Ryan — the name taken by Melbourne-raised, Brooklyn-based
-                    Nick Murphy — writes, performs and records all of his own
-                    music.
+                    {userData?.about || "Update information about you"}
                   </p>
-                  <a href="#pablo" onClick={(e) => e.preventDefault()}>
+                  {/* <a href="#pablo" onClick={(e) => e.preventDefault()}>
                     Show more
-                  </a>
+                  </a> */}
                 </div>
               </CardBody>
             </Card>
@@ -229,19 +212,18 @@ const Profile = () => {
                   </Col>
                   <Col className="text-right" xs="4">
                     <Button
-                      color="primary"
+                      color="info"
                       href="#pablo"
                       onClick={() => handleEditUser(userData)}
-                      size="sm"
                     >
-                      Settings
+                      Edit profile
                     </Button>
                   </Col>
                 </Row>
               </CardHeader>
+              {/* User information */}
               <CardBody>
                 <Form>
-                  {/* User information */}
                   <h6 className="heading-small text-muted mb-4">
                     User information
                   </h6>
@@ -324,6 +306,7 @@ const Profile = () => {
                     </Row>
                   </div>
                   <hr className="my-4" />
+
                   {/* Address */}
                   <h6 className="heading-small text-muted mb-4">
                     Contact information
@@ -340,7 +323,7 @@ const Profile = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue={userData?.address || ""}
+                            defaultValue={userData?.address.street || ""}
                             id="input-address"
                             placeholder="Address"
                             type="text"
@@ -360,7 +343,7 @@ const Profile = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue={userData?.city || ""}
+                            defaultValue={userData?.address.city || ""}
                             id="input-city"
                             placeholder="City"
                             type="text"
@@ -378,7 +361,7 @@ const Profile = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue={userData?.country || ""}
+                            defaultValue={userData?.address.country || ""}
                             id="input-country"
                             placeholder="Country"
                             type="text"
@@ -396,7 +379,7 @@ const Profile = () => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue={userData?.postal_code || ""}
+                            defaultValue={userData?.address.postal_code || ""}
                             id="input-postal-code"
                             placeholder="Postal code"
                             type="number"
@@ -416,7 +399,7 @@ const Profile = () => {
                         className="form-control-alternative"
                         placeholder="A few words about you ..."
                         rows="4"
-                        defaultValue={userData?.about_me || ""}
+                        defaultValue={userData?.about || ""}
                         type="textarea"
                         disabled
                       />
@@ -428,6 +411,7 @@ const Profile = () => {
           </Col>
         </Row>
 
+        {/* Modal */}
         {/* Modal */}
         <Modal isOpen={isModalOpen} toggle={handleCancelEdit} backdrop="static">
           <ModalHeader toggle={handleCancelEdit}>Edit My Profile</ModalHeader>
@@ -442,12 +426,24 @@ const Profile = () => {
                 <Input type="email" name="email" id="email" value={editedEmail} onChange={handleChange} />
               </FormGroup>
               <FormGroup>
-                <Label for="password">Password</Label>
-                <Input type="password" name="password" id="password" value={editedPassword} onChange={handleChange} />
+                <Label for="street">Street</Label>
+                <Input type="text" name="street" id="street" value={editedStreet} onChange={handleChange} />
               </FormGroup>
               <FormGroup>
-                <Label for="address">Address</Label>
-                <Input type="text" name="address" id="address" value={editedAddress} onChange={handleChange} />
+                <Label for="city">City</Label>
+                <Input type="text" name="city" id="city" value={editedCity} onChange={handleChange} />
+              </FormGroup>
+              <FormGroup>
+                <Label for="country">Country</Label>
+                <Input type="text" name="country" id="country" value={editedCountry} onChange={handleChange} />
+              </FormGroup>
+              <FormGroup>
+                <Label for="postal_code">Postal Code</Label>
+                <Input type="text" name="postalCode" id="postalCode" value={editedPostalCode} onChange={handleChange} />
+              </FormGroup>
+              <FormGroup>
+                <Label for="about">About Me</Label>
+                <Input type="textarea" name="about" id="about" value={editedAbout} onChange={handleChange} />
               </FormGroup>
             </Form>
           </ModalBody>
@@ -456,6 +452,8 @@ const Profile = () => {
             <Button color="secondary" onClick={handleCancelEdit}>Cancel</Button>
           </ModalFooter>
         </Modal>
+
+
       </Container>
     </>
   );

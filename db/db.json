@@ -1,24 +1,71 @@
 {
   "users": [
     {
-      "id": "69cf",
-      "name": "Nguyên Tuấnn",
+      "id": "faf1",
+      "name": "Nguyên Tuấn",
       "email": "user1@gmail.com",
       "role": "ADMIN",
-      "status": "Banned",
-      "password": "$2a$10$NgaMlCD1uBhmjSHMz9xFw.dNuSwm7VMY282aUSIFWF3XE6VBkFfcm",
-      "address": "227/97 HHTT",
-      "token": "227/97 HHTT"
+      "status": "Active",
+      "avatarUrl": "https://images.fpt.shop/unsafe/filters:quality(90)/fptshop.com.vn/uploads/images/tin-tuc/169746/Originals/avatar-anime.jpg",
+      "password": "$2a$10$A3KCLHJMKP/s.8OG8.iVUevnSj9NhPohA09WXqqeEz4Ey95UFUDM6",
+      "address": {
+        "street": "227/97 HHT",
+        "city": "Buon Ma Thuot",
+        "country": "Viet nam",
+        "postal_code": "63000"
+      },
+      "about": "hi",
+      "token": "9xiagt6myz6"
     },
     {
-      "id": "c281",
-      "name": "Nguyên Tuấn",
-      "email": "user3@gmail.com",
-      "password": "$2a$10$CnxqU5lD/P0.srIUOYaTDeR60k1de6PkpIzEF8tFvaLiT/u3LVYBy",
+      "id": "832a",
+      "name": "Tuấn",
+      "email": "user2@gmail.com",
+      "avatarUrl": "https://images.fpt.shop/unsafe/filters:quality(90)/fptshop.com.vn/uploads/images/tin-tuc/169746/Originals/avatar-anime.jpg",
       "role": "USER",
       "status": "IsActive",
-      "address": "",
-      "token": "82qy4muiyxt"
+      "password": "$2a$10$Up.iN6k7VLGz5m96EBrtbumhkJxFXBjEbiQwALYatBCOA.7v8tQ.u",
+      "address": {
+        "street": "227/97 HHT",
+        "city": "Buon Ma Thuot",
+        "country": "Viet nam",
+        "postal_code": "63000"
+      },
+      "token": "nirteywl6gm"
+    }
+  ],
+  "products": [
+    {
+      "id": "1",
+      "name": "iPhone 12",
+      "category_id": 1,
+      "status": "Active"
+    },
+    {
+      "id": "2",
+      "name": "iPhone 11",
+      "category_id": 1,
+      "status": "Active"
+    },
+    {
+      "id": "3",
+      "name": "iPhone SE",
+      "category_id": 1,
+      "status": "Active"
+    }
+  ],
+  "categories": [
+    {
+      "id": "2511",
+      "name": "IPads"
+    },
+    {
+      "id": "82cc",
+      "name": "SmartPhones"
+    },
+    {
+      "id": "923d",
+      "name": "Laptops"
     }
   ]
 }

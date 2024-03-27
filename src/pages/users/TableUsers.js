@@ -1,22 +1,14 @@
 import React, { useState, useEffect } from "react";
 import {
-  Badge,
   Card,
   CardHeader,
-  CardFooter,
   DropdownMenu,
   DropdownItem,
   UncontrolledDropdown,
   DropdownToggle,
-  Media,
-  Pagination,
-  PaginationItem,
-  PaginationLink,
-  Progress,
   Table,
   Container,
   Row,
-  UncontrolledTooltip,
   Button,
   Modal,
   ModalHeader,
@@ -29,6 +21,7 @@ import {
 } from "reactstrap";
 import Header from "components/Headers/Header.js";
 import axios from "axios";
+import { updateUser } from "services/user";
 
 const Tables = () => {
   const [users, setUsers] = useState([]);
@@ -38,6 +31,13 @@ const Tables = () => {
   const [editedEmail, setEditedEmail] = useState("");
   const [editedRole, setEditedRole] = useState("");
   const [editedStatus, setEditedStatus] = useState("");
+  const [userData, setUserData] = useState(null);
+  const [editedPassword, setEditedPassword] = useState("");
+  const [editedStreet, setEditedStreet] = useState("");
+  const [editedCity, setEditedCity] = useState("");
+  const [editedCountry, setEditedCountry] = useState("");
+  const [editedPostalCode, setEditedPostalCode] = useState("");
+  const [editedAbout, setEditedAbout] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -52,52 +52,21 @@ const Tables = () => {
     fetchUsers();
   }, []);
 
-  const handleEditUser = (user) => {
-    setEditingUser(user);
-    setEditedName(user.name);
-    setEditedEmail(user.email);
-    setEditedRole(user.role);
-    setEditedStatus(user.status);
+  const handleEditUser = (userData) => {
+    setEditingUser(userData);
+    setEditedName(userData.name);
+    setEditedEmail(userData.email);
+    setEditedPassword(userData.password);
+    setEditedStreet(userData.address.street);
+    setEditedCity(userData.address.city);
+    setEditedCountry(userData.address.country);
+    setEditedPostalCode(userData.address.postal_code);
+    setEditedAbout(userData.about);
     setIsModalOpen(true);
   };
 
   const handleSaveEdit = async () => {
-    const isConfirmed = window.confirm("Are you sure you want to save these changes?");
-    if (isConfirmed) {
-      try {
-        // Create an object with the updated user data
-        const updatedUser = {
-          id: editingUser.id,
-          name: editedName,
-          email: editedEmail,
-          role: editedRole,
-          status: editedStatus,
-          password: editingUser.password,
-          token: editingUser.token
-        };
-
-        // Send PUT request to update user data in db.json
-        await axios.put(`http://localhost:3001/users/${editingUser.id}`, updatedUser);
-
-        // Update the users list after successful update
-        const updatedUsers = users.map(user =>
-          user.id === editingUser.id ? { ...user, ...updatedUser } : user
-        );
-        setUsers(updatedUsers);
-
-        // Close the modal and reset edit states
-        setIsModalOpen(false);
-        setEditingUser(null);
-        setEditedName("");
-        setEditedEmail("");
-        setEditedRole("");
-        setEditedStatus("");
-
-        window.alert("User updated successfully!");
-      } catch (error) {
-        console.error("Error updating user:", error);
-      }
-    }
+    updateUser(editingUser, editedName, editedEmail, editedPassword, editedStreet, editedCity, editedCountry, editedPostalCode, editedAbout, setIsModalOpen, setEditingUser);
   };
 
   const handleCancelEdit = () => {
@@ -296,8 +265,8 @@ const Tables = () => {
                   value={editedRole}
                   onChange={handleChange}
                 >
-                  <option value="ADMIN">ADMIN</option>
                   <option value="USER">USER</option>
+                  <option value="ADMIN">ADMIN</option>
                 </Input>
               </FormGroup>
               <FormGroup>
@@ -310,8 +279,8 @@ const Tables = () => {
                   onChange={handleChange}
                 >
                   <option value="Active">Active</option>
+                  <option value="UnActive">UnActive</option>
                   <option value="Banned">Banned</option>
-                  <option value="Isactive">Isactive</option>
                 </Input>
               </FormGroup>
             </Form>
