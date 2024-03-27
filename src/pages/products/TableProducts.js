@@ -1,37 +1,12 @@
 import React, { useState, useEffect } from "react";
-import {
-  Badge,
-  Card,
-  CardHeader,
-  CardFooter,
-  DropdownMenu,
-  DropdownItem,
-  UncontrolledDropdown,
-  DropdownToggle,
-  Media,
-  Pagination,
-  PaginationItem,
-  PaginationLink,
-  Progress,
-  Table,
-  Container,
-  Row,
-  UncontrolledTooltip,
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Form,
-  FormGroup,
-  Label,
-  Input
-} from "reactstrap";
+import { Badge, Card, CardHeader, CardFooter, DropdownMenu, DropdownItem, UncontrolledDropdown, DropdownToggle, Media, Pagination, PaginationItem, PaginationLink, Progress, Table, Container, Row, UncontrolledTooltip, Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input } from "reactstrap";
 import Header from "components/Headers/Header.js";
-import axios from "axios";
+import { getAllProducts, updateProduct, createProduct, deleteProduct } from '../../services/product';
+import { getCategoryList } from "../../services/category";
 
-const Products = () => {
+const TableProducts = () => {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editedProduct, setEditedProduct] = useState(null);
   const [editedName, setEditedName] = useState('');
@@ -40,18 +15,27 @@ const Products = () => {
   const [editedDescription, setEditedDescription] = useState('');
   const [editedPrice, setEditedPrice] = useState('');
   const [editedImage, setEditedImage] = useState('');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [newProductName, setNewProductName] = useState('');
+  const [newProductCategory, setNewProductCategory] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage] = useState(5);
+  
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/products");
-        setProducts(response.data);
+        const productsData = await getAllProducts();
+        setProducts(productsData);
+
+        const categoriesData = await getCategoryList();
+        setCategories(categoriesData);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error fetching data:", error);
       }
     };
 
-    fetchProducts();
+    fetchData();
   }, []);
 
   const handleEditProduct = (product) => {
@@ -64,7 +48,7 @@ const Products = () => {
 
   const handleSaveEdit = async () => {
     try {
-      await axios.put(`http://localhost:3001/products/${editedProduct.id}`, {
+      await updateProduct(editedProduct.id, {
         name: editedName,
         category_id: editedCategory,
         status: editedStatus
@@ -119,6 +103,47 @@ const Products = () => {
     }
   };
 
+  const handleCreateProduct = async () => {
+    try {
+      await createProduct({
+        name: newProductName,
+        category_id: newProductCategory,
+      });
+      const updatedProducts = await getAllProducts();
+      setProducts(updatedProducts);
+      setIsCreateModalOpen(false);
+
+      window.alert("Product created successfully!");
+    } catch (error) {
+      console.error("Error creating product:", error);
+    }
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    const isConfirmed = window.confirm("Are you sure you want to delete this product?");
+    if (isConfirmed) {
+      try {
+        await deleteProduct(productId);
+        const updatedProducts = await getAllProducts();
+        setProducts(updatedProducts);
+
+        window.alert("Product deleted successfully!");
+      } catch (error) {
+        console.error("Error deleting product:", error);
+      }
+    }
+  };
+
+  const toggleCreateModal = () => {
+    setIsCreateModalOpen(!isCreateModalOpen);
+  };
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <>
       <Header />
@@ -129,6 +154,7 @@ const Products = () => {
               <CardHeader className="border-0">
                 <h3 className="mb-0">Products Table</h3>
               </CardHeader>
+              <Button color="primary" onClick={toggleCreateModal}>Add New Product</Button>
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
@@ -140,11 +166,11 @@ const Products = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map(product => (
+                  {currentProducts.map(product => (
                     <tr key={product.id}>
                       <th scope="row">{product.id}</th>
                       <td>{product.name}</td>
-                      <td>{product.category_id}</td>
+                      <td>{categories.find(category => category.id === product.category_id)?.name}</td>
                       <td>{product.status}</td>
                       <td className="text-right">
                         <UncontrolledDropdown>
@@ -162,6 +188,9 @@ const Products = () => {
                             <DropdownItem onClick={() => handleEditProduct(product)}>
                               Edit
                             </DropdownItem>
+                            <DropdownItem onClick={() => handleDeleteProduct(product.id)}>
+                              Delete
+                            </DropdownItem>
                           </DropdownMenu>
                         </UncontrolledDropdown>
                       </td>
@@ -169,6 +198,40 @@ const Products = () => {
                   ))}
                 </tbody>
               </Table>
+              <CardFooter className="py-4">
+                <nav aria-label="...">
+                  <Pagination
+                    className="pagination justify-content-end mb-0"
+                    listClassName="justify-content-end mb-0"
+                  >
+                    <PaginationItem>
+                      <PaginationLink
+                        previous
+                        href="#"
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                      />
+                    </PaginationItem>
+                    {[...Array(Math.ceil(products.length / productsPerPage)).keys()].map(
+                      (number) => (
+                        <PaginationItem key={number} className={number + 1 === currentPage ? "active" : ""}>
+                          <PaginationLink href="#" onClick={() => paginate(number + 1)}>
+                            {number + 1}
+                          </PaginationLink>
+                        </PaginationItem>
+                      )
+                    )}
+                    <PaginationItem>
+                      <PaginationLink
+                        next
+                        href="#"
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={currentPage === Math.ceil(products.length / productsPerPage)}
+                      />
+                    </PaginationItem>
+                  </Pagination>
+                </nav>
+              </CardFooter>
             </Card>
           </div>
         </Row>
@@ -177,65 +240,76 @@ const Products = () => {
         <Modal isOpen={isModalOpen} toggle={handleCancelEdit}>
           <ModalHeader toggle={handleCancelEdit}>Edit Product</ModalHeader>
           <ModalBody>
-            <Form>
-              <FormGroup>
-                <Label for="editedName">Name</Label>
-                <Input
-                  type="text"
-                  name="name"
-                  id="editedName"
-                  value={editedName}
-                  onChange={handleChange}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for="editedCategory">Category</Label>
-                <Input
-                  type="select"
-                  name="category_id"
-                  id="editedCategory"
-                  value={editedCategory}
-                  onChange={handleChange}
-                >
-                  <option value="">Select a category</option>
-                  {/* Map through categories to render options */}
-                </Input>
-              </FormGroup>
-              <FormGroup>
-                <Label for="editedDescription">Description</Label>
-                <Input
-                  type="text"
-                  name="description"
-                  id="editedDescription"
-                  value={editedDescription}
-                  onChange={handleChange}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for="editedPrice">Price</Label>
-                <Input
-                  type="number"
-                  name="price"
-                  id="editedPrice"
-                  value={editedPrice}
-                  onChange={handleChange}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for="editedImage">Image Path</Label>
-                <Input
-                  type="text"
-                  name="image_path"
-                  id="editedImage"
-                  value={editedImage}
-                  onChange={handleChange}
-                />
-              </FormGroup>
-            </Form>
+            <FormGroup>
+              <Label for="editedName">Name</Label>
+              <Input
+                type="text"
+                name="name"
+                id="editedName"
+                value={editedName}
+                onChange={handleChange}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="editedCategory">Category</Label>
+              <Input
+                type="select"
+                name="category_id"
+                id="editedCategory"
+                value={editedCategory}
+                onChange={handleChange}
+              >
+                <option value="">Select a category</option>
+                {categories.map(category => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </Input>
+            </FormGroup>
+            {/* Add other form fields for description, price, image_path if needed */}
           </ModalBody>
           <ModalFooter>
             <Button color="primary" onClick={handleSaveEdit}>Save</Button>{' '}
             <Button color="secondary" onClick={handleCancelEdit}>Cancel</Button>
+          </ModalFooter>
+        </Modal>
+
+        {/* Modal for Create Product */}
+        <Modal isOpen={isCreateModalOpen} toggle={toggleCreateModal}>
+          <ModalHeader toggle={toggleCreateModal}>Create Product</ModalHeader>
+          <ModalBody>
+            <FormGroup>
+              <Label for="newProductName">Name</Label>
+              <Input
+                type="text"
+                name="newProductName"
+                id="newProductName"
+                value={newProductName}
+                onChange={(e) => setNewProductName(e.target.value)}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="newProductCategory">Category</Label>
+              <Input
+                type="select"
+                name="newProductCategory"
+                id="newProductCategory"
+                onChange={(e) => setNewProductCategory(e.target.value)}
+              >
+                <option value="">Select a category</option>
+                {categories.map(category => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </Input>
+            </FormGroup>
+            {/* Add other form fields for description, price, image_path if needed */}
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={handleCreateProduct}>Create</Button>{' '}
+            <Button color="secondary" onClick={toggleCreateModal}>Cancel</Button>
           </ModalFooter>
         </Modal>
       </Container>
@@ -243,4 +317,4 @@ const Products = () => {
   );
 };
 
-export default Products;
+export default TableProducts;

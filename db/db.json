@@ -32,32 +32,69 @@
         "postal_code": "63000"
       },
       "token": "nirteywl6gm"
+    },
+    {
+      "id": "12ea8",
+      "name": "ASUS TUF ",
+      "category_id": "923d"
+    },{
+      "id": "12ev8",
+      "name": "ASUS TUF ",
+      "category_id": "923d"
+    },{
+      "id": "12zxe8",
+      "name": "ASUS TUF ",
+      "category_id": "923d"
+    },{
+      "id": "12fe8",
+      "name": "ASUS TUF ",
+      "category_id": "923d"
+    },{
+      "id": "12egr8",
+      "name": "ASUS TUF ",
+      "category_id": "923d"
+    },{
+      "id": "12ert8",
+      "name": "ASUS TUF ",
+      "category_id": "923d"
     }
   ],
   "products": [
     {
-      "id": "1",
-      "name": "iPhone 12",
-      "category_id": 1,
-      "status": "Active"
+      "id": "12e8",
+      "name": "ASUS TUF ",
+      "category_id": "923d"
     },
     {
-      "id": "2",
-      "name": "iPhone 11",
-      "category_id": 1,
-      "status": "Active"
+      "id": "f141",
+      "name": "IPhone 14",
+      "category_id": "82cc"
     },
     {
-      "id": "3",
-      "name": "iPhone SE",
-      "category_id": 1,
-      "status": "Active"
+      "id": "2161",
+      "name": "IPhone X",
+      "category_id": "82cc"
+    },
+    {
+      "id": "0db2",
+      "name": "IPad pro 2024 rumors",
+      "category_id": "2511"
+    },
+    {
+      "id": "152d",
+      "name": "Table Desktop",
+      "category_id": "68b8"
+    },
+    {
+      "id": "4bf3",
+      "name": "Mac M1",
+      "category_id": "923d"
     }
   ],
   "categories": [
     {
-      "id": "2511",
-      "name": "IPads"
+      "name": "IPadss",
+      "id": "2511"
     },
     {
       "id": "82cc",
@@ -70,6 +107,14 @@
     {
       "name": "Tables",
       "id": "68b8"
+    },
+    {
+      "id": "2de9",
+      "name": "Cases"
+    },
+    {
+      "id": "974b",
+      "name": "Rams"
     }
   ]
 }
