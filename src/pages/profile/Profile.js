@@ -3,7 +3,6 @@ import axios from "axios";
 import { Button, Card, CardHeader, CardBody, FormGroup, Form, Input, Container, Row, Col, Modal, ModalHeader, ModalBody, ModalFooter, Label } from "reactstrap";
 import UserHeader from "components/Headers/UserHeader.js";
 import { useAuth } from "context/auth";
-import bcrypt from "bcryptjs";
 import { updateUser } from "services/user";
 
 const Profile = () => {
