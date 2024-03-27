@@ -4,26 +4,26 @@
       "id": "faf1",
       "name": "Nguyên Tuấn",
       "email": "user1@gmail.com",
+      "avatarUrl": "https://images.fpt.shop/unsafe/filters:quality(90)/fptshop.com.vn/uploads/images/tin-tuc/169746/Originals/avatar-anime.jpg",
       "role": "ADMIN",
       "status": "Active",
-      "avatarUrl": "https://images.fpt.shop/unsafe/filters:quality(90)/fptshop.com.vn/uploads/images/tin-tuc/169746/Originals/avatar-anime.jpg",
-      "password": "$2a$10$A3KCLHJMKP/s.8OG8.iVUevnSj9NhPohA09WXqqeEz4Ey95UFUDM6",
+      "password": "$2a$10$/BeHWQ9oVjUfy6hPkr5ozeXf7jAhkOn4j8/n.pyaK2s1GsryiJbSW",
       "address": {
         "street": "227/97 HHT",
         "city": "Buon Ma Thuot",
         "country": "Viet nam",
         "postal_code": "63000"
       },
-      "about": "hi",
+      "about": "Hi",
       "token": "9xiagt6myz6"
     },
     {
       "id": "832a",
-      "name": "Tuấn",
+      "name": "Tuấn Nguyên",
       "email": "user2@gmail.com",
       "avatarUrl": "https://images.fpt.shop/unsafe/filters:quality(90)/fptshop.com.vn/uploads/images/tin-tuc/169746/Originals/avatar-anime.jpg",
       "role": "USER",
-      "status": "IsActive",
+      "status": "Banned",
       "password": "$2a$10$Up.iN6k7VLGz5m96EBrtbumhkJxFXBjEbiQwALYatBCOA.7v8tQ.u",
       "address": {
         "street": "227/97 HHT",

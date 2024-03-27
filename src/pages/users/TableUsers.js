@@ -55,6 +55,8 @@ const Tables = () => {
     setEditingUser(userData);
     setEditedName(userData.name);
     setEditedEmail(userData.email);
+    setEditedRole(userData.role);
+    setEditedStatus(userData.status);
     setEditedPassword(userData.password);
     setEditedStreet(userData.address.street);
     setEditedCity(userData.address.city);
@@ -65,7 +67,7 @@ const Tables = () => {
   };
 
   const handleSaveEdit = async () => {
-    updateUser(editingUser, editedName, editedEmail, editedPassword, editedStreet, editedCity, editedCountry, editedPostalCode, editedAbout, setIsModalOpen, setEditingUser);
+    updateUser(editingUser, editedName, editedEmail, editedRole, editedStatus, editedPassword, editedStreet, editedCity, editedCountry, editedPostalCode, editedAbout, setIsModalOpen, setEditingUser);
   };
 
   const handleCancelEdit = () => {
@@ -78,6 +80,7 @@ const Tables = () => {
   };
 
   const handleChange = (event) => {
+    console.log('hi');
     const { name, value } = event.target;
     switch (name) {
       case "name":
