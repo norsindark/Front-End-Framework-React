@@ -10,6 +10,8 @@ const TableCategories = () => {
   const [editingCategory, setEditingCategory] = useState(null);
   const [editedName, setEditedName] = useState("");
   const [newCategoryName, setNewCategoryName] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage] = useState(5);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -29,6 +31,8 @@ const TableCategories = () => {
     setEditedName(category.name);
     setIsEditModalOpen(true);
   };
+
+
 
   const handleSaveEdit = async () => {
     const isConfirmed = window.confirm("Are you sure you want to save these changes?");
@@ -58,10 +62,17 @@ const TableCategories = () => {
     setIsCreateModalOpen(false);
   };
 
+  const handleCancelCreate = () => {
+    setNewCategoryName('');
+    setIsCreateModalOpen(false);
+  }
+
+
   const handleChange = (event) => {
     const { value } = event.target;
     setEditedName(value);
   };
+
 
   const handleDeleteCategory = async (categoryId) => {
     const isConfirmed = window.confirm("Are you sure you want to delete this category?");
@@ -79,26 +90,32 @@ const TableCategories = () => {
     }
   };
 
-  const toggleModal = (modalType) => {
-    if (modalType === 'create') {
-      setIsCreateModalOpen(!isCreateModalOpen);
-    } else if (modalType === 'edit') {
-      setIsEditModalOpen(!isEditModalOpen);
+  const handleOpenCreateCategory = async () => {
+    setIsCreateModalOpen(true);
+  }
+
+  const handleCreateCategory = async () => {
+    const isConfirmed = window.confirm(`Are you sure you want to create category "${newCategoryName}"?`);
+    if (isConfirmed) {
+      try {
+        await createCategory({ name: newCategoryName });
+        setIsCreateModalOpen();
+        setNewCategoryName('');
+        const updatedCategories = await getCategoryList();
+        setCategories(updatedCategories);
+        window.alert("Category created successfully!");
+      } catch (error) {
+        console.error('Error creating category:', error);
+      }
     }
   };
 
-  const handleCreateCategory = async () => {
-    try {
-      await createCategory({ name: newCategoryName });
-      toggleModal();
-      setNewCategoryName('');
-      const updatedCategories = await getCategoryList();
-      setCategories(updatedCategories);
-      window.alert("Category created successfully!");
-    } catch (error) {
-      console.error('Error creating category:', error);
-    }
-  };
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = categories.slice(indexOfFirstProduct, indexOfLastProduct);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <>
@@ -110,7 +127,7 @@ const TableCategories = () => {
               <CardHeader className="border-0">
                 <h3 className="mb-0">Categories</h3>
               </CardHeader>
-              <Button color="primary" onClick={toggleModal}>Add New Category</Button>
+              <Button color="primary" onClick={handleOpenCreateCategory}>Add New Category</Button>
               <Table className="align-items-center table-flush" responsive>
                 <thead className="thead-light">
                   <tr>
@@ -120,7 +137,7 @@ const TableCategories = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {categories.map(category => (
+                  {currentProducts.map(category => (
                     <tr key={category.id}>
                       <th scope="row">{category.id}</th>
                       <td>{category.name}</td>
@@ -150,12 +167,46 @@ const TableCategories = () => {
                   ))}
                 </tbody>
               </Table>
+              <CardFooter className="py-4">
+                <nav aria-label="...">
+                  <Pagination
+                    className="pagination justify-content-end mb-0"
+                    listClassName="justify-content-end mb-0"
+                  >
+                    <PaginationItem>
+                      <PaginationLink
+                        previous
+                        href="#"
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                      />
+                    </PaginationItem>
+                    {[...Array(Math.ceil(categories.length / productsPerPage)).keys()].map(
+                      (number) => (
+                        <PaginationItem key={number} className={number + 1 === currentPage ? "active" : ""}>
+                          <PaginationLink href="#" onClick={() => paginate(number + 1)}>
+                            {number + 1}
+                          </PaginationLink>
+                        </PaginationItem>
+                      )
+                    )}
+                    <PaginationItem>
+                      <PaginationLink
+                        next
+                        href="#"
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={currentPage === Math.ceil(categories.length / productsPerPage)}
+                      />
+                    </PaginationItem>
+                  </Pagination>
+                </nav>
+              </CardFooter>
             </Card>
           </div>
         </Row>
 
         {/* Modal for Edit Category */}
-        <Modal isOpen={isEditModalOpen } toggle={handleCancelEdit}>
+        <Modal isOpen={isEditModalOpen} toggle={handleCancelEdit}>
           <ModalHeader toggle={handleCancelEdit}>Edit Category</ModalHeader>
           <ModalBody>
             <Form>
@@ -179,8 +230,8 @@ const TableCategories = () => {
 
         {/* Modal Create */}
 
-        <Modal isOpen={isCreateModalOpen } toggle={toggleModal}>
-          <ModalHeader toggle={toggleModal}>Create New Category</ModalHeader>
+        <Modal isOpen={isCreateModalOpen} toggle={handleCancelCreate}>
+          <ModalHeader toggle={handleCancelCreate}>Create New Category</ModalHeader>
           <ModalBody>
             <Form>
               <FormGroup>
@@ -191,7 +242,7 @@ const TableCategories = () => {
           </ModalBody>
           <ModalFooter>
             <Button color="primary" onClick={handleCreateCategory}>Create</Button>
-            <Button color="secondary" onClick={toggleModal}>Cancel</Button>
+            <Button color="secondary" onClick={handleCancelCreate}>Cancel</Button>
           </ModalFooter>
         </Modal>
       </Container>

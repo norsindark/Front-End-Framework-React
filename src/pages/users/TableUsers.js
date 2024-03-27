@@ -1,24 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardHeader,
-  DropdownMenu,
-  DropdownItem,
-  UncontrolledDropdown,
-  DropdownToggle,
-  Table,
-  Container,
-  Row,
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Form,
-  FormGroup,
-  Label,
-  Input
-} from "reactstrap";
+import { Badge, Card, CardHeader, CardFooter, DropdownMenu, DropdownItem, UncontrolledDropdown, DropdownToggle, Media, Pagination, PaginationItem, PaginationLink, Progress, Table, Container, Row, UncontrolledTooltip, Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input } from "reactstrap";
 import Header from "components/Headers/Header.js";
 import axios from "axios";
 import { updateUser } from "services/user";
@@ -37,6 +18,8 @@ const Tables = () => {
   const [editedCountry, setEditedCountry] = useState("");
   const [editedPostalCode, setEditedPostalCode] = useState("");
   const [editedAbout, setEditedAbout] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productsPerPage] = useState(5);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -116,6 +99,12 @@ const Tables = () => {
     }
   };
 
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = users.filter(user => user.status !== 'Banned').slice(indexOfFirstProduct, indexOfLastProduct);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <>
       <Header />
@@ -139,7 +128,7 @@ const Tables = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.filter(user => user.status !== 'Banned').map(user => (
+                  {currentProducts.filter(user => user.status !== 'Banned').map(user => (
                     <tr key={user.id}>
                       <th scope="row">{user.id}</th>
                       <td>{user.name}</td>
@@ -172,6 +161,40 @@ const Tables = () => {
                   ))}
                 </tbody>
               </Table>
+              <CardFooter className="py-4">
+                <nav aria-label="...">
+                  <Pagination
+                    className="pagination justify-content-end mb-0"
+                    listClassName="justify-content-end mb-0"
+                  >
+                    <PaginationItem>
+                      <PaginationLink
+                        previous
+                        href="#"
+                        onClick={() => setCurrentPage(currentPage - 1)}
+                        disabled={currentPage === 1}
+                      />
+                    </PaginationItem>
+                    {[...Array(Math.ceil(users.length / productsPerPage)).keys()].map(
+                      (number) => (
+                        <PaginationItem key={number} className={number + 1 === currentPage ? "active" : ""}>
+                          <PaginationLink href="#" onClick={() => paginate(number + 1)}>
+                            {number + 1}
+                          </PaginationLink>
+                        </PaginationItem>
+                      )
+                    )}
+                    <PaginationItem>
+                      <PaginationLink
+                        next
+                        href="#"
+                        onClick={() => setCurrentPage(currentPage + 1)}
+                        disabled={currentPage === Math.ceil(users.length / productsPerPage)}
+                      />
+                    </PaginationItem>
+                  </Pagination>
+                </nav>
+              </CardFooter>
             </Card>
           </div>
         </Row>
