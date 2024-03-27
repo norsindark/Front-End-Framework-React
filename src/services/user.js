@@ -2,7 +2,7 @@ import axios from 'axios';
 import bcrypt from 'bcryptjs';
 import { BASE_API } from 'constant/network';
 
-const updateUser = async (editingUser, editedName, editedEmail, editedPassword, editedStreet, editedCity, editedCountry, editedPostalCode, editedAbout, setIsModalOpen, setEditingUser, refreshUserData) => {
+const updateUser = async (editingUser, editedName, editedEmail, editedPassword, editedStreet, editedCity, editedCountry, editedPostalCode, editedAbout, setIsModalOpen, setEditingUser) => {
     const isConfirmed = window.confirm("Are you sure you want to save these changes?");
     if (isConfirmed) {
         try {
@@ -30,12 +30,13 @@ const updateUser = async (editingUser, editedName, editedEmail, editedPassword, 
                 token: editingUser.token,
             };
 
-            await axios.put(`http://localhost:3001/users/${editingUser.id}`, updatedUser);
+            await axios.put(`${BASE_API}/users/${editingUser.id}`, updatedUser);
+
+            console.log(updatedUser);
 
             setIsModalOpen(false);
             setEditingUser(null);
             window.alert("User updated successfully!");
-            await refreshUserData();
         } catch (error) {
             console.error("Error updating user:", error);
         }

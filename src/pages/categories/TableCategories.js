@@ -5,7 +5,8 @@ import { getCategoryList, updateCategory, deleteCategory, createCategory } from 
 
 const TableCategories = () => {
   const [categories, setCategories] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const [editedName, setEditedName] = useState("");
   const [newCategoryName, setNewCategoryName] = useState('');
@@ -26,7 +27,7 @@ const TableCategories = () => {
   const handleEditCategory = (category) => {
     setEditingCategory(category);
     setEditedName(category.name);
-    setIsModalOpen(true);
+    setIsEditModalOpen(true);
   };
 
   const handleSaveEdit = async () => {
@@ -40,7 +41,7 @@ const TableCategories = () => {
         );
 
         setCategories(updatedCategories);
-        setIsModalOpen(false);
+        setIsEditModalOpen(false);
         setEditingCategory(null);
         setEditedName("");
 
@@ -54,7 +55,7 @@ const TableCategories = () => {
   const handleCancelEdit = () => {
     setEditingCategory(null);
     setEditedName("");
-    setIsModalOpen(false);
+    setIsCreateModalOpen(false);
   };
 
   const handleChange = (event) => {
@@ -78,15 +79,19 @@ const TableCategories = () => {
     }
   };
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
+  const toggleModal = (modalType) => {
+    if (modalType === 'create') {
+      setIsCreateModalOpen(!isCreateModalOpen);
+    } else if (modalType === 'edit') {
+      setIsEditModalOpen(!isEditModalOpen);
+    }
   };
 
   const handleCreateCategory = async () => {
     try {
       await createCategory({ name: newCategoryName });
-      toggleModal(); 
-      setNewCategoryName(''); 
+      toggleModal();
+      setNewCategoryName('');
       const updatedCategories = await getCategoryList();
       setCategories(updatedCategories);
       window.alert("Category created successfully!");
@@ -150,7 +155,7 @@ const TableCategories = () => {
         </Row>
 
         {/* Modal for Edit Category */}
-        <Modal isOpen={isModalOpen} toggle={handleCancelEdit}>
+        <Modal isOpen={isEditModalOpen } toggle={handleCancelEdit}>
           <ModalHeader toggle={handleCancelEdit}>Edit Category</ModalHeader>
           <ModalBody>
             <Form>
@@ -174,7 +179,7 @@ const TableCategories = () => {
 
         {/* Modal Create */}
 
-        <Modal isOpen={isModalOpen} toggle={toggleModal}>
+        <Modal isOpen={isCreateModalOpen } toggle={toggleModal}>
           <ModalHeader toggle={toggleModal}>Create New Category</ModalHeader>
           <ModalBody>
             <Form>

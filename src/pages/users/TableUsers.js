@@ -31,7 +31,6 @@ const Tables = () => {
   const [editedEmail, setEditedEmail] = useState("");
   const [editedRole, setEditedRole] = useState("");
   const [editedStatus, setEditedStatus] = useState("");
-  const [userData, setUserData] = useState(null);
   const [editedPassword, setEditedPassword] = useState("");
   const [editedStreet, setEditedStreet] = useState("");
   const [editedCity, setEditedCity] = useState("");
