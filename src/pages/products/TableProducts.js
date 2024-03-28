@@ -18,9 +18,11 @@ const TableProducts = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [newProductName, setNewProductName] = useState('');
   const [newProductCategory, setNewProductCategory] = useState('');
+  const [newDescription, setNewDescription] = useState('');
+  const [newPrice, setNewPrice] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [productsPerPage] = useState(5);
-  
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,7 +62,9 @@ const TableProducts = () => {
             ...product,
             name: editedName,
             category_id: editedCategory,
-            status: editedStatus
+            status: editedStatus,
+            description: editedDescription,
+            price: editedPrice,
           };
         }
         return product;
@@ -108,6 +112,8 @@ const TableProducts = () => {
       await createProduct({
         name: newProductName,
         category_id: newProductCategory,
+        description: newDescription,
+        price: newPrice,
       });
       const updatedProducts = await getAllProducts();
       setProducts(updatedProducts);
@@ -161,7 +167,8 @@ const TableProducts = () => {
                     <th scope="col">ID</th>
                     <th scope="col">Name</th>
                     <th scope="col">Category</th>
-                    <th scope="col">Status</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Description</th>
                     <th scope="col" />
                   </tr>
                 </thead>
@@ -171,7 +178,8 @@ const TableProducts = () => {
                       <th scope="row">{product.id}</th>
                       <td>{product.name}</td>
                       <td>{categories.find(category => category.id === product.category_id)?.name}</td>
-                      <td>{product.status}</td>
+                      <td>{product.price}</td>
+                      <td>{product.description}</td>
                       <td className="text-right">
                         <UncontrolledDropdown>
                           <DropdownToggle
@@ -267,7 +275,26 @@ const TableProducts = () => {
                 ))}
               </Input>
             </FormGroup>
-            {/* Add other form fields for description, price, image_path if needed */}
+            <FormGroup>
+              <Label for="description">Description</Label>
+              <Input
+                type="text"
+                name="description"
+                id="description"
+                value={editedDescription}
+                onChange={handleChange}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="price">Price</Label>
+              <Input
+                type="text"
+                name="price"
+                id="price"
+                value={editedPrice}
+                onChange={handleChange}
+              />
+            </FormGroup>
           </ModalBody>
           <ModalFooter>
             <Button color="primary" onClick={handleSaveEdit}>Save</Button>{' '}
@@ -287,6 +314,26 @@ const TableProducts = () => {
                 id="newProductName"
                 value={newProductName}
                 onChange={(e) => setNewProductName(e.target.value)}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="newProductDescription">Description</Label>
+              <Input
+                type="text"
+                name="newProductDescription"
+                id="newProductDescription"
+                value={newDescription}
+                onChange={(e) => setNewDescription(e.target.value)}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="newProductPrice">Price</Label>
+              <Input
+                type="text"
+                name="newProductPrice"
+                id="newProductPrice"
+                value={newPrice}
+                onChange={(e) => setNewPrice(e.target.value)}
               />
             </FormGroup>
             <FormGroup>

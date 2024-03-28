@@ -14,6 +14,7 @@ const getAllProducts = async () => {
 const updateProduct = async (productId, updatedProductData) => {
   try {
     await axios.put(`${BASE_API}/products/${productId}`, updatedProductData);
+    window.alert("Product update successfully!");
   } catch (error) {
     console.error('Error updating product:', error);
     throw error;

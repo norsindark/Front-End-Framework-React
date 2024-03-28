@@ -37,23 +37,28 @@
       "id": "12ea8",
       "name": "ASUS TUF ",
       "category_id": "923d"
-    },{
+    },
+    {
       "id": "12ev8",
       "name": "ASUS TUF ",
       "category_id": "923d"
-    },{
+    },
+    {
       "id": "12zxe8",
       "name": "ASUS TUF ",
       "category_id": "923d"
-    },{
+    },
+    {
       "id": "12fe8",
       "name": "ASUS TUF ",
       "category_id": "923d"
-    },{
+    },
+    {
       "id": "12egr8",
       "name": "ASUS TUF ",
       "category_id": "923d"
-    },{
+    },
+    {
       "id": "12ert8",
       "name": "ASUS TUF ",
       "category_id": "923d"
@@ -61,9 +66,9 @@
   ],
   "products": [
     {
-      "id": "12e8",
       "name": "ASUS TUF ",
-      "category_id": "923d"
+      "category_id": "923d",
+      "id": "12e8"
     },
     {
       "id": "f141",
@@ -81,14 +86,21 @@
       "category_id": "2511"
     },
     {
-      "id": "152d",
-      "name": "Table Desktop",
-      "category_id": "68b8"
+      "name": "Table Desktops",
+      "category_id": "974b",
+      "id": "152d"
     },
     {
       "id": "4bf3",
       "name": "Mac M1",
       "category_id": "923d"
+    },
+    {
+      "id": "f6dc",
+      "name": "ASUS TUF ",
+      "category_id": "923d",
+      "description": "hihi",
+      "price": "123000"
     }
   ],
   "categories": [
