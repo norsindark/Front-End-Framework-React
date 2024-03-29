@@ -45,6 +45,21 @@ const updateUser = async (editingUser, editedName, editedEmail, editedRole, edit
 
 };
 
+const updateUserPassword = async (user, newPassword) => {
+    try {
+        const hashedPassword = await encodePassword(newPassword);
+        
+        const updatedUser = { ...user, password: hashedPassword };
+
+        await axios.put(`${BASE_API}/users/${user.id}`, updatedUser);
+
+        return "Password updated successfully!";
+    } catch (error) {
+        console.error("Error updating user password:", error);
+        throw error;
+    }
+};
+
 const encodePassword = async (password) => {
     try {
         const saltRounds = 10;
@@ -59,5 +74,6 @@ const encodePassword = async (password) => {
 
 export {
     updateUser,
-    encodePassword
+    encodePassword,
+    updateUserPassword
 }

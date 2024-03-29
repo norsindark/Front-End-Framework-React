@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Card, CardBody, Col, FormGroup, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row } from "reactstrap";
-import axios from "axios";
 import { useAuth } from "context/auth";
+import { Button, Card, CardBody, Col, FormGroup, Form, Input, InputGroup, InputGroupAddon, InputGroupText, Row, Modal, ModalHeader, ModalBody, ModalFooter, Label } from "reactstrap";
+import axios from "axios";
+import { BASE_URL_SERVER } from "constant/network";
+import { BASE_API } from 'constant/network';
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   const { signIn } = useAuth();
 
@@ -29,6 +32,26 @@ const Login = () => {
     } catch (error) {
       console.error("Error logging in:", error);
       setError("An error occurred while logging in");
+    }
+  };
+
+  const handleCreateAccount = () => {
+    navigate("/auth/register", { replace: true });
+  };
+
+  const toggleModal = () => {
+    setShowModal(!showModal);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post('http://localhost:8080/api/auth/forgot-password', { email });
+      alert("Password reset email sent successfully!");
+      toggleModal();
+    } catch (error) {
+      console.error("Error sending email:", error);
+      alert("An error occurred while sending email.");
     }
   };
 
@@ -107,7 +130,10 @@ const Login = () => {
             <a
               className="text-light"
               href="#pablo"
-              onClick={(e) => e.preventDefault()}
+              onClick={(e) => {
+                e.preventDefault();
+                toggleModal();
+              }}
             >
               <small>Forgot password?</small>
             </a>
@@ -116,12 +142,35 @@ const Login = () => {
             <a
               className="text-light"
               href="#pablo"
-              onClick={(e) => e.preventDefault()}
+              onClick={handleCreateAccount}
             >
               <small>Create new account</small>
             </a>
           </Col>
         </Row>
+
+        {/* Modal */}
+        <Modal isOpen={showModal} toggle={toggleModal}>
+          <ModalHeader toggle={toggleModal}>Forgot Password</ModalHeader>
+          <ModalBody>
+            <Form>
+              <FormGroup>
+                <Label for="email">Email</Label>
+                <Input
+                  type="email"
+                  id="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </FormGroup>
+            </Form>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={handleSubmit}>Submit</Button>
+            <Button color="secondary" onClick={toggleModal}>Cancel</Button>
+          </ModalFooter>
+        </Modal>
       </Col>
     </>
   );
