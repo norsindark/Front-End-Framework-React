@@ -6,7 +6,7 @@
       "email": "user1@gmail.com",
       "avatarUrl": "https://images.fpt.shop/unsafe/filters:quality(90)/fptshop.com.vn/uploads/images/tin-tuc/169746/Originals/avatar-anime.jpg",
       "role": "ADMIN",
-      "status": "Active",
+      "status": "Banned",
       "password": "$2a$10$/BeHWQ9oVjUfy6hPkr5ozeXf7jAhkOn4j8/n.pyaK2s1GsryiJbSW",
       "address": {
         "street": "227/97 HHT",
@@ -18,50 +18,35 @@
       "token": "9xiagt6myz6"
     },
     {
-      "id": "832a",
-      "name": "Tuấn Nguyên",
-      "email": "user2@gmail.com",
+      "id": "faf1s",
+      "name": "Nguyên Tuấn",
+      "email": "norsindark@gmail.com",
       "avatarUrl": "https://images.fpt.shop/unsafe/filters:quality(90)/fptshop.com.vn/uploads/images/tin-tuc/169746/Originals/avatar-anime.jpg",
-      "role": "USER",
+      "role": "ADMIN",
       "status": "Banned",
-      "password": "$2a$10$Up.iN6k7VLGz5m96EBrtbumhkJxFXBjEbiQwALYatBCOA.7v8tQ.u",
+      "password": "$2a$10$VCklojy/pTQU90e2gnSIxOmM2HNivckQrymLMIRNaAeE7ArHQ/DDK",
       "address": {
         "street": "227/97 HHT",
         "city": "Buon Ma Thuot",
         "country": "Viet nam",
         "postal_code": "63000"
       },
-      "token": "nirteywl6gm"
+      "about": "Hi",
+      "token": "9xiagt6myz6"
     },
     {
-      "id": "12ea8",
-      "name": "ASUS TUF ",
-      "category_id": "923d"
-    },
-    {
-      "id": "12ev8",
-      "name": "ASUS TUF ",
-      "category_id": "923d"
-    },
-    {
-      "id": "12zxe8",
-      "name": "ASUS TUF ",
-      "category_id": "923d"
-    },
-    {
-      "id": "12fe8",
-      "name": "ASUS TUF ",
-      "category_id": "923d"
-    },
-    {
-      "id": "12egr8",
-      "name": "ASUS TUF ",
-      "category_id": "923d"
-    },
-    {
-      "id": "12ert8",
-      "name": "ASUS TUF ",
-      "category_id": "923d"
+      "id": "3e75",
+      "name": "nguyen tuan",
+      "email": "user3@gmail.com",
+      "role": "ADMIN",
+      "status": "IsActive",
+      "password": "$2a$10$GhFjcmJlFDoUtftYlqxFM.RvBsFr8WU8b4o9llxL6vhUjLzSL1B22",
+      "address": {
+        "street": "227/97 HHT",
+        "city": "Buon Ma Thuot",
+        "postal_code": "123456"
+      },
+      "token": "noifb9yfym"
     }
   ],
   "products": [
